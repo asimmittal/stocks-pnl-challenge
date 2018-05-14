@@ -2,6 +2,8 @@
 
 > Challenge for Omega.One
 
+![Screenshot](blob:https://imgur.com/0fb02672-d896-4b6f-aa26-5692d31c8158)
+
 ## Build Setup
 
 ``` bash

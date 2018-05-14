@@ -3,14 +3,24 @@
 
 		<!--
 			This is the loader section, when the app loads, it will first show a loader
-			while the data is being fetched. The display of 
+			while the data is being fetched. The display of this loader depends on the state
+			variable 'inProgress'
 		-->
 		<div class="loader section" v-if="inProgress">
 			<img src="./assets/spinner.gif"/>
 		</div>
+
+
+		<!--
+			Once the data is fetched, and we're going to show the result section
+		-->
 		<div class="result" v-else>
 			<h2 class="title">Stocks P&amp;L</h2>
+			
+			<!-- the card like UI for the table goes in here -->
 			<div class="table-data" v-if="tableData != null || tableData != undefined" ref="tableDataContainer" :class="{'reveal': startFade}">
+				
+				<!-- table with data -->
 				<table cellspacing="5" cellpadding="5" border="1">
 					<tr class="header">
 						<td v-for="item in tableData.headers">{{item}}</td>
@@ -24,16 +34,22 @@
 				</table>
 
 				<br/>
+
+				<!-- horiz rule -->
 				<div class="hr"/>
 
+				<!-- realized pnl value -->
 				<h4>
 					<span>Total realized profit / loss: &nbsp; &nbsp;</span>
 					<span :class="{'loss': tableData.pnl < 0}"> {{(tableData.pnl < 0 ? "-": "")}} </span>
 					<span :class="{'loss': tableData.pnl < 0}"> {{"$" + Math.abs(tableData.pnl)}} </span>
 				</h4>
 
+				<!-- cash available -->
 				<h4>Cash available:&nbsp; &nbsp;<span :class="{'green': (cashReserve > 0)}">{{'$' + Math.max(cashReserve,0)}}</span></h4>
 			</div>
+
+			<!-- if there is some error, show appropriate UI -->
 			<div class="fetch-error" v-else>
 				<div class="error-ui-container">
 					<img src="./assets/oops.png"/>
@@ -51,6 +67,9 @@ import parseData from "./libs/JsonToPNL";
 
 export default {
 
+	/**
+	 * define the state of this app component
+	*/
 	data(){
 		return{
 			inProgress: true,
@@ -60,6 +79,10 @@ export default {
 		}
 	},
 
+	/**
+	 * event lifecycle hook
+	 * when the app is mounted, start the GET request to fetch the data
+	*/
 	mounted(){
 		let url = "https://jasonbase.com/things/LW3j/";
 		let _this = this;
@@ -67,6 +90,11 @@ export default {
 	},
 
 	methods:{
+
+		/**
+		 * handleSuccess()
+		 * this is invoked when the data is fetched successfully
+		*/
 		handleSuccess(response){
 			if(response.data){
 				this.inProgress = false;
@@ -79,12 +107,23 @@ export default {
 			}
 		},
 
+		/**
+		 * handleFail()
+		 * this is invoked when there is some error in fetching the data or parsing it
+		*/
+		
 		handleFail(error){
 			this.tableData = null;
 			this.inProgress = false;
 		},
 
+		/**
+		 * formatForDisplay()
+		 * this method will format the data so it can be shown in the table
+		*/
 		formatForDisplay(parsedData){
+
+			//define the labels you'll use in the row header
 			let rowHeaders = {
 				'date': "Date",
 				'symbol': "Stock",
@@ -95,19 +134,26 @@ export default {
 				'pnl': "Profit / Loss ($)"
 			};
 
-			let totalPNL = 0;
-			let keys = Object.keys(rowHeaders);
+			let totalPNL = 0;								//we'll calc total pnl as we go
+			let keys = Object.keys(rowHeaders);				//'date', 'symbol' etc...
 			let numRows = parsedData.length + 1;			//one extra for header row
-			let _rows = [];
-			let _headers = [];
+			let _rows = [];									//this will contain the data for each row
+			let _headers = [];								//this will contain the label for each column
 			
+			//cycle through each row
 			for(let i = 0; i < numRows; i++){
 				let row = [];
 				let dataObject = parsedData[i];
 				
+				//cycle throught each column
 				for(let j = 0; j < keys.length; j++){
 					let key = keys[j];
-					if(i == 0) _headers.push(rowHeaders[key]);
+					
+					//first row? push to headers
+					if(i == 0) _headers.push(rowHeaders[key]);	
+
+					//now save the data for this row
+					//and add to the total pnl
 					if(dataObject) {
 						row.push(dataObject[key]);
 						if(key == 'pnl') totalPNL += dataObject[key];
@@ -117,6 +163,7 @@ export default {
 				if(dataObject) _rows.push(row);
 			}
 
+			//modify state
 			this.tableData = {
 				headers: _headers,
 				rows: _rows,
@@ -126,6 +173,10 @@ export default {
 			console.log("---> table data:", this.tableData);
 		},
 
+		/**
+		 * fadeTableDataIntoView()
+		 * this will make the changes to the CSS to fade up the table into view
+		*/
 		fadeTableDataIntoView(){
 			let _this = this;
 			setTimeout(() => _this.startFade = true, 150);

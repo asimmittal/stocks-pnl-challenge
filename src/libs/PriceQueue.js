@@ -70,16 +70,28 @@ class PriceQueue{
 		else return null;
 	}
 	
+	/**
+	* toString()
+	* get the string rep for this queue
+	*/
 	toString(){
 		return this.symbol + "->" + this.q.toString();
 	}
 	
+	/**
+	* getTotalValue()
+	* get the total value of all the blocks in the queue
+	*/
 	getTotalValue(){
 		let sum = 0;
 		for(let i = 0; i < this.q.length; i++) sum += this.q[i];
 		return sum;
 	}
 	
+	/**
+	* length()
+	* get the number of blocks in the queue
+	*/
 	length(){
 		return this.q.length;
 	}

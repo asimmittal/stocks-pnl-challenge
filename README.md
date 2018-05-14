@@ -2,7 +2,7 @@
 
 > Challenge for Omega.One
 
-![Screenshot](https://imgur.com/0fb02672-d896-4b6f-aa26-5692d31c8158)
+![Screenshot](https://imgur.com/a/P2PuXDw)
 
 ## Build Setup
 

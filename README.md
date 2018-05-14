@@ -2,7 +2,7 @@
 
 > Challenge for Omega.One
 
-![Screenshot](https://imgur.com/a/P2PuXDw)
+![Screenshot](https://raw.githubusercontent.com/asimmittal/stocks-pnl-challenge/master/stocks-pnl.gif)
 
 ## Build Setup
 
